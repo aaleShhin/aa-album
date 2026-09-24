@@ -17,7 +17,6 @@
     overflow: hidden;
   }
 
-  /* мягкое свечение на фоне */
   body::before {
     content: '';
     position: fixed;
@@ -42,34 +41,31 @@
     font-weight: 900;
     letter-spacing: 0.15em;
     text-align: center;
+    text-decoration: none;
     background: linear-gradient(120deg,
-      #ffffff 0%,
-      #a78bfa 25%,
-      #f472b6 50%,
-      #38bdf8 75%,
-      #ffffff 100%);
+      #ffffff 0%, #a78bfa 25%, #f472b6 50%, #38bdf8 75%, #ffffff 100%);
     background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shine 6s linear infinite, pulse 3s ease-in-out infinite;
     filter: drop-shadow(0 0 25px rgba(167, 139, 250, 0.55));
-    user-select: none;
+    transition: filter 0.3s ease;
   }
 
-  /* блик по буквам */
+  .title:hover {
+    filter: drop-shadow(0 0 45px rgba(244, 114, 182, 0.9));
+  }
+
   @keyframes shine {
     0%   { background-position: 0% 50%; }
     100% { background-position: 300% 50%; }
   }
-
-  /* лёгкое дыхание */
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50%      { transform: scale(1.04); }
   }
 
-  /* декоративные линии по бокам */
   .title::before,
   .title::after {
     content: '';
@@ -85,6 +81,6 @@
 </style>
 </head>
 <body>
-  <h1 class="title">AA ALBUM.KZ</h1>
+  <a href="tracks.html" class="title">AA ALBUM.KZ</a>
 </body>
 </html>
