@@ -1,9 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трек — AA ALBUM.KZ</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh; background: #0a0a0f; color: #fff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    padding: 60px 20px 80px;
+  }
+  body::before {
+    content: ''; position: fixed; inset: -50%;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(120,80,255,0.25), transparent 45%),
+      radial-gradient(circle at 75% 80%, rgba(255,80,180,0.18), transparent 45%);
+    z-index: 0; pointer-events: none;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+  .back {
+    display: inline-block; color: #a78bfa; text-decoration: none;
+    font-size: 0.95rem; margin-bottom: 30px; opacity: 0.8;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .back:hover { opacity: 1; transform: translateX(-4px); }
+
+  .cover {
+    width: 100%; max-width: 340px; aspect-ratio: 1/1;
+    margin: 0 auto 30px; border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #a78bfa, #f472b6, #38bdf8);
+    box-shadow: 0 20px 60px rgba(167,139,250,0.45);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; font-weight: 900; color: rgba(10,10,15,0.85);
+    position: relative;
+  }
+  .cover img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .cover .fallback {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 0;
+  }
+  .cover img { position: relative; z-index: 1; }
+
+  h1 {
+    font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 900;
+    letter-spacing: 0.05em; text-align: center; margin-bottom: 8px;
+  }
+  .sub { text-align: center; color: #9ca3af; font-size: 1rem; margin-bottom: 30px; }
+  audio {
+    width: 100%; margin-bottom: 40px;
+    border-radius: 12px; outline: none;
+    filter: invert(0.9) hue-rotate(180deg);
+  }
+  .lyrics-title {
+    font-size: 0.85rem; text-transform: uppercase;
+    letter-spacing: 0.2em; color: #a78bfa;
+    margin-bottom: 16px; text-align: center;
+  }
+  .lyrics {
+    white-space: pre-line; line-height: 1.9;
+    font-size: 1.05rem; color: #d1d5db;
+    text-align: center; padding: 30px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a href="tracks.html" class="back">← к списку</a>
+
+    <div class="cover" id="cover">
+      <div class="fallback" id="fallback">♪</div>
+      <img id="coverImg" src="cover.jpg" alt="AA ALBUM.KZ"
+           onerror="this.style.display='none'">
+    </div>
+
+    <h1 id="title">Загрузка…</h1>
+    <p class="sub" id="artist"></p>
+    <audio id="player" controls preload="metadata"></audio>
+    <div class="lyrics-title">Текст песни</div>
+    <div class="lyrics" id="lyrics">Загрузка…</div>
+  </div>
+
 <script>
+  // ============== ТРЕКИ ==============
+  // Меняй только lyrics (текст песни)!
+  // cover — теперь не цифра, а просто fallback-символ на случай, если картинки нет.
   const TRACKS = {
-    1: { title: "HOTEL ремейк 4 146Cmin", artist: "AALESHIN, paradeev", cover: "01",
-         lyrics: `Твой текст...` },
-    2: { title: "alabama Em95", artist: "AALESHIN, paradeev", cover: "02", lyrics: `...` },
-    // ... остальные треки
+    1: {
+      title: "HOTEL ремейк 4 146Cmin",
+      artist: "AALESHIN, paradeev",
+      audio: "track1.mp3",
+      lyrics:
+`AALESHIN feat. paradeev
+
+[0:00] Интро
+
+[0:13] Куплет 1 — AALESHIN
+Я ща рокзвезда, разбил гитару об пол
+Летают струны по номеру,
+В руках — дон периньон
+YSL сапожки — я упал на диван
+Вешаю провод, че говорить — ха, ты просто еблан
+
+ха, ты просто еблан
+я хочу уехать в закат
+
+я листаю vogue
+в отеле просто бардак
+
+хмурое утро, шумные дамы
+грязные улицы вокруг эти камеры
+нахуй yesman'ов, фальшивые взгляды
+я — ебал эту драму
+
+[0:39] Куплет 2
+Я снова убитый в нулину,
+С экраном разбитым на половину
+Свет от софитов выжигает в глаза
+В моей голове кричат голоса
+Я этот ебаный цирк ненавижу
+Всё заебало и мне сносит крышу
+Эти люди пустые, как мои ожидания
+И это всё что мог бы я дать им
+
+[1:12]
+
+[1:44]
+им не понять этот вайб
+да не понять этот вайб
+вам не понять этот style
+да не понять этот вайб`
+    },
+    2: { title: "alabama Em95", artist: "AALESHIN, paradeev", audio: "track2.mp3",
+         lyrics: `Текст песни alabama Em95.` },
+    3: { title: "texas rockstar village 102Dm", artist: "AALESHIN, paradeev", audio: "track3.mp3",
+         lyrics: `Текст песни texas rockstar village 102Dm.` },
+    4: { title: "бит 2", artist: "AALESHIN, paradeev", audio: "track4.mp3",
+         lyrics: `Текст песни бит 2.` },
+    5: { title: "Coffee break 121m", artist: "AALESHIN, paradeev", audio: "track5.mp3",
+         lyrics: `Текст песни Coffee break 121m.` },
+    6: { title: "Romantic night in Paris ремейк", artist: "AALESHIN, paradeev", audio: "track6.mp3",
+         lyrics: `Текст песни Romantic night in Paris ремейк.` },
+    7: { title: "el gitaruo 114Fm remake 3", artist: "AALESHIN, paradeev", audio: "track7.mp3",
+         lyrics: `Текст песни el gitaruo 114Fm remake 3.` },
+    8: { title: "MJ 126Am", artist: "AALESHIN, paradeev", audio: "track8.mp3",
+         lyrics: `Текст песни MJ 126Am.` }
   };
 
   const params = new URLSearchParams(location.search);
@@ -13,42 +162,15 @@
   if (!track) {
     document.getElementById("title").textContent = "Трек не найден";
     document.getElementById("lyrics").textContent = "Вернись к списку треков.";
-    document.querySelector(".cover").style.display = "none";
     document.getElementById("player").style.display = "none";
+    document.querySelector(".cover").style.display = "none";
   } else {
     document.title = track.title + " — AA ALBUM.KZ";
-    document.getElementById("cover").textContent = track.cover;
     document.getElementById("title").textContent = track.title;
     document.getElementById("artist").textContent = track.artist;
     document.getElementById("lyrics").textContent = track.lyrics;
-
-    const player = document.getElementById("player");
-    const num = id;                                // "1", "2", ...
-    const candidates = [
-      `track${num}.mp3`,                           // корень
-      `tracks/track${num}.mp3`,                    // папка tracks
-      `./track${num}.mp3`,
-      `./tracks/track${num}.mp3`
-    ];
-
-    let i = 0;
-    function tryNext() {
-      if (i >= candidates.length) {
-        console.error("Не нашёл mp3 ни по одному пути:", candidates);
-        return;
-      }
-      const url = candidates[i++];
-      fetch(url, { method: "HEAD" })
-        .then(r => {
-          if (r.ok) {
-            player.src = url;
-            console.log("✅ mp3 найден:", url);
-          } else {
-            tryNext();
-          }
-        })
-        .catch(tryNext);
-    }
-    tryNext();
+    document.getElementById("player").src = track.audio;
   }
 </script>
+</body>
+</html>
