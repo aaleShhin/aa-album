@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AA ALBUM.KZ</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0f;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  /* мягкое свечение на фоне */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(120, 80, 255, 0.25), transparent 45%),
+      radial-gradient(circle at 70% 60%, rgba(255, 80, 180, 0.20), transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.15), transparent 55%);
+    animation: floatBg 18s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  @keyframes floatBg {
+    0%   { transform: translate(-3%, -3%) scale(1); }
+    100% { transform: translate(3%, 3%) scale(1.1); }
+  }
+
+  .title {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(2.5rem, 9vw, 7rem);
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-align: center;
+    background: linear-gradient(120deg,
+      #ffffff 0%,
+      #a78bfa 25%,
+      #f472b6 50%,
+      #38bdf8 75%,
+      #ffffff 100%);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 6s linear infinite, pulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 25px rgba(167, 139, 250, 0.55));
+    user-select: none;
+  }
+
+  /* блик по буквам */
+  @keyframes shine {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* лёгкое дыхание */
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); }
+  }
+
+  /* декоративные линии по бокам */
+  .title::before,
+  .title::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 12vw;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #a78bfa, transparent);
+    opacity: 0.7;
+  }
+  .title::before { left: -14vw; }
+  .title::after  { right: -14vw; }
+</style>
+</head>
+<body>
+  <h1 class="title">AA ALBUM.KZ</h1>
+</body>
+</html>
