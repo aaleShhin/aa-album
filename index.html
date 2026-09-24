@@ -15,6 +15,7 @@
     background: #0a0a0f;
     font-family: 'Segoe UI', system-ui, sans-serif;
     overflow: hidden;
+    padding: 20px;
   }
 
   body::before {
@@ -27,6 +28,7 @@
       radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.15), transparent 55%);
     animation: floatBg 18s ease-in-out infinite alternate;
     z-index: 0;
+    pointer-events: none;
   }
 
   @keyframes floatBg {
@@ -37,20 +39,33 @@
   .title {
     position: relative;
     z-index: 1;
-    font-size: clamp(2.5rem, 9vw, 7rem);
+    display: block;
+    max-width: 100%;
+
+    /* АДАПТИВНЫЙ ШРИФТ:
+       на узком экране уменьшается, на широком — растёт,
+       но никогда не выходит за пределы экрана */
+    font-size: clamp(1.1rem, 6.5vw, 5rem);
+
     font-weight: 900;
-    letter-spacing: 0.15em;
+    letter-spacing: clamp(0.02em, 0.8vw, 0.12em);
     text-align: center;
     text-decoration: none;
+
     background: linear-gradient(120deg,
       #ffffff 0%, #a78bfa 25%, #f472b6 50%, #38bdf8 75%, #ffffff 100%);
     background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+
     animation: shine 6s linear infinite, pulse 3s ease-in-out infinite;
     filter: drop-shadow(0 0 25px rgba(167, 139, 250, 0.55));
     transition: filter 0.3s ease;
+
+    /* Чтобы длинная строка не растягивала страницу */
+    white-space: nowrap;
+    padding: 0 10px;
   }
 
   .title:hover {
@@ -66,18 +81,31 @@
     50%      { transform: scale(1.04); }
   }
 
+  /* Декоративные линии по бокам — только на широких экранах */
   .title::before,
   .title::after {
     content: '';
     position: absolute;
     top: 50%;
-    width: 12vw;
+    width: 10vw;
     height: 2px;
     background: linear-gradient(90deg, transparent, #a78bfa, transparent);
     opacity: 0.7;
   }
-  .title::before { left: -14vw; }
-  .title::after  { right: -14vw; }
+  .title::before { left: -12vw; }
+  .title::after  { right: -12vw; }
+
+  /* На телефонах убираем линии — мешают */
+  @media (max-width: 600px) {
+    .title::before,
+    .title::after { display: none; }
+
+    .title {
+      white-space: normal;   /* разрешаем перенос */
+      line-height: 1.15;
+      word-break: break-word;
+    }
+  }
 </style>
 </head>
 <body>
