@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Треки — AA ALBUM.KZ</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #0a0a0f;
+    color: #fff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    padding: 60px 20px 80px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(120, 80, 255, 0.20), transparent 45%),
+      radial-gradient(circle at 75% 80%, rgba(255, 80, 180, 0.15), transparent 45%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .back {
+    display: inline-block;
+    color: #a78bfa;
+    text-decoration: none;
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+    opacity: 0.8;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .back:hover { opacity: 1; transform: translateX(-4px); }
+
+  h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    margin-bottom: 40px;
+    background: linear-gradient(120deg, #fff, #a78bfa, #f472b6, #38bdf8, #fff);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 6s linear infinite;
+  }
+
+  @keyframes shine {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* Список треков */
+  .track {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(8px);
+    transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: appear 0.5s ease forwards;
+  }
+
+  .track:hover {
+    background: rgba(167, 139, 250, 0.10);
+    border-color: rgba(167, 139, 250, 0.35);
+    transform: translateX(6px);
+  }
+
+  @keyframes appear {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .num {
+    width: 34px;
+    font-size: 0.9rem;
+    color: #a78bfa;
+    font-weight: 700;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .info { flex: 1; min-width: 0; }
+
+  .name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .artist {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .duration {
+    font-size: 0.85rem;
+    color: #6b7280;
+    flex-shrink: 0;
+  }
+
+  .play {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(167, 139, 250, 0.15);
+    color: #a78bfa;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+  .track:hover .play {
+    background: #a78bfa;
+    color: #0a0a0f;
+  }
+
+  /* задержки появления по очереди */
+  .track:nth-child(1)  { animation-delay: 0.05s; }
+  .track:nth-child(2)  { animation-delay: 0.10s; }
+  .track:nth-child(3)  { animation-delay: 0.15s; }
+  .track:nth-child(4)  { animation-delay: 0.20s; }
+  .track:nth-child(5)  { animation-delay: 0.25s; }
+  .track:nth-child(6)  { animation-delay: 0.30s; }
+  .track:nth-child(7)  { animation-delay: 0.35s; }
+  .track:nth-child(8)  { animation-delay: 0.40s; }
+  .track:nth-child(9)  { animation-delay: 0.45s; }
+  .track:nth-child(10) { animation-delay: 0.50s; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a href="index.html" class="back">← назад</a>
+    <h1>ТРЕКИ</h1>
+
+    <div class="track">
+      <span class="num">01</span>
+      <div class="info">
+        <div class="name">Название трека 1</div>
+        <div class="artist">Исполнитель</div>
+      </div>
+      <span class="duration">3:24</span>
+      <span class="play">▶</span>
+    </div>
+
+    <div class="track">
+      <span class="num">02</span>
+      <div class="info">
+        <div class="name">Название трека 2</div>
+        <div class="artist">Исполнитель</div>
+      </div>
+      <span class="duration">2:58</span>
+      <span class="play">▶</span>
+    </div>
+
+    <div class="track">
+      <span class="num">03</span>
+      <div class="info">
+        <div class="name">Название трека 3</div>
+        <div class="artist">Исполнитель</div>
+      </div>
+      <span class="duration">4:11</span>
+      <span class="play">▶</span>
+    </div>
+
+    <div class="track">
+      <span class="num">04</span>
+      <div class="info">
+        <div class="name">Название трека 4</div>
+        <div class="artist">Исполнитель</div>
+      </div>
+      <span class="duration">3:02</span>
+      <span class="play">▶</span>
+    </div>
+
+    <div class="track">
+      <span class="num">05</span>
+      <div class="info">
+        <div class="name">Название трека 5</div>
+        <div class="artist">Исполнитель</div>
+      </div>
+      <span class="duration">3:47</span>
+      <span class="play">▶</span>
+    </div>
+  </div>
+</body>
+</html>
