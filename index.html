@@ -84,7 +84,7 @@
   .volume input[type="range"] { width:90px; -webkit-appearance:none; height:3px; background:rgba(255,255,255,0.12); border-radius:2px; outline:none; }
   .volume input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; border-radius:50%; background:var(--text); cursor:pointer; }
   .rating {
-  display: flex; gap: 10px; margin-top: 16px;
+  display: flex; gap: 10px; margin-top: 12px;
 }
 .rate-btn {
   width: 54px; height: 54px;
@@ -172,7 +172,6 @@
   <button class="rate-btn" data-score="60">60</button>
   <button class="rate-btn" data-score="90">90</button>
 </div>
-<div class="rating-info" id="ratingInfo"></div>
     </div>
   </div>
 
@@ -461,27 +460,15 @@ function initRating() {
         // повторный клик — снимаем оценку
         setUserRating(0);
         document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("active"));
-        updateRatingInfo(0);
       } else {
         setUserRating(score);
         document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        updateRatingInfo(score);
       }
     });
   });
-  updateRatingInfo(userScore);
 }
 
-function updateRatingInfo(score) {
-  const el = document.getElementById("ratingInfo");
-  if (!el) return;
-  if (score === 0) {
-    el.textContent = "Оцени альбом — 30, 60 или 90";
-  } else {
-    el.innerHTML = `Твоя оценка: <b>${score}</b>`;
-  }
-}
 
 initRating();
   
