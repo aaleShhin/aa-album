@@ -96,7 +96,7 @@
     display: grid; grid-template-columns: 44px 1fr 90px 40px;
     gap: 20px; align-items: center;
     padding: 12px 20px; border-radius: 8px;
-    text-decoration: none; color: inherit; cursor: pointer;
+    color: inherit; cursor: pointer;
     transition: background 0.15s;
   }
   .track:hover { background: var(--bg-2); }
@@ -131,6 +131,17 @@
     font-size: 0.88rem; color: var(--text-2); text-align: right;
     font-variant-numeric: tabular-nums;
   }
+  .lyrics-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 8px;
+    color: var(--text-2); text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lyrics-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: var(--accent);
+  }
+  .lyrics-btn svg { display: block; }
   .player {
     position: fixed; left: 0; right: 0; bottom: 0;
     height: 86px; background: rgba(22, 22, 26, 0.96);
@@ -222,7 +233,7 @@
     .album-cover { width: 100%; max-width: 240px; height: auto; aspect-ratio: 1/1; }
     .album-title { font-size: 2rem; }
     .tracks-head { display: none; }
-    .track { grid-template-columns: 36px 1fr 40px; gap: 12px; padding: 10px 12px; }
+    .track { grid-template-columns: 36px 1fr 36px; gap: 12px; padding: 10px 12px; }
     .track-duration { display: none; }
     .player {
       grid-template-columns: 1fr auto; gap: 12px;
@@ -235,6 +246,7 @@
     .controls-buttons { gap: 14px; }
     .ctrl { width: 34px; height: 34px; }
     .play-main { width: 42px; height: 42px; }
+    .lyrics-btn { width: 30px; height: 30px; }
   }
 </style>
 </head>
@@ -334,7 +346,7 @@ const TRACKS = [
 
 const listEl = document.getElementById("tracks");
 listEl.innerHTML = TRACKS.map((t, i) => `
-  <a class="track" data-id="${t.id}" href="track.html?id=${t.id}">
+  <div class="track" data-id="${t.id}">
     <div class="track-num">
       <span class="num-text">${i + 1}</span>
       <span class="play-icon">▶</span>
@@ -344,8 +356,12 @@ listEl.innerHTML = TRACKS.map((t, i) => `
       <div class="track-artist">${t.artist}</div>
     </div>
     <div class="track-duration" data-dur>--:--</div>
-    <div></div>
-  </a>
+    <a class="lyrics-btn" href="track.html?id=${t.id}" title="Текст песни">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 6h16M4 12h16M4 18h10"/>
+      </svg>
+    </a>
+  </div>
 `).join("");
 
 function fmtDuration(sec) {
@@ -426,12 +442,9 @@ function playFirst() { playTrack(0); }
 
 document.querySelectorAll(".track").forEach((el, i) => {
   el.addEventListener("click", (e) => {
-    e.preventDefault();
+    if (e.target.closest(".lyrics-btn")) return;
     if (currentIndex === i) togglePlay();
     else playTrack(i);
-  });
-  el.addEventListener("dblclick", () => {
-    location.href = el.getAttribute("href");
   });
 });
 
