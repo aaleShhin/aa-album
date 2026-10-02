@@ -10,8 +10,7 @@
   body {
     min-height: 100vh; background: #0d0d0f; color: #f5f5f7;
     font-family: 'Inter', -apple-system, 'Segoe UI', system-ui, sans-serif;
-    padding: 60px 20px 80px;
-    -webkit-font-smoothing: antialiased;
+    padding: 60px 20px 80px; -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 720px; margin: 0 auto; }
   .back {
@@ -20,7 +19,6 @@
     transition: color 0.2s, transform 0.2s;
   }
   .back:hover { color: #f5f5f7; transform: translateX(-4px); }
-
   .cover {
     width: 100%; max-width: 320px; aspect-ratio: 1/1;
     margin: 0 auto 30px; border-radius: 12px;
@@ -35,44 +33,35 @@
     width: 100%; height: 100%; object-fit: cover;
     display: block; z-index: 1;
   }
-
   h1 {
     font-size: clamp(1.5rem, 4.5vw, 2.2rem); font-weight: 900;
     letter-spacing: -0.02em; text-align: center; margin-bottom: 8px;
   }
   .sub { text-align: center; color: #8a8a92; font-size: 0.95rem; margin-bottom: 30px; }
-
   audio {
-    width: 100%; margin-bottom: 40px;
-    border-radius: 12px; outline: none;
-    filter: invert(0.9) hue-rotate(180deg);
+    width: 100%; margin-bottom: 40px; border-radius: 12px;
+    outline: none; filter: invert(0.9) hue-rotate(180deg);
   }
-
   .lyrics-title {
     font-size: 0.75rem; text-transform: uppercase;
     letter-spacing: 0.15em; color: #8a8a92;
-    margin-bottom: 16px; text-align: center;
-    font-weight: 600;
+    margin-bottom: 16px; text-align: center; font-weight: 600;
   }
-
   .lyrics {
     white-space: pre-line; line-height: 1.9;
     font-size: 1rem; color: #c9c9d1;
     text-align: center; padding: 30px 20px;
-    background: #16161a;
-    border-radius: 12px;
+    background: #16161a; border-radius: 12px;
   }
 </style>
 </head>
 <body>
   <div class="wrap">
     <a href="index.html" class="back">← к списку</a>
-
     <div class="cover">
       ♪
       <img src="cover.jpg" alt="" onerror="this.style.display='none'">
     </div>
-
     <h1 id="title">Загрузка…</h1>
     <p class="sub" id="artist"></p>
     <audio id="player" controls preload="metadata"></audio>
@@ -82,3 +71,26 @@
 
 <script>
 var TRACKS = {
+  1: {
+    title: "intro (пво)", artist: "AALESHIN", audio: "track1.mp3",
+    lyrics: "а - он не даёт спать\nпал лаич сделал движ и это не со зла\n\nя подпишу контракт и еду на донбасс\nя подпишу контракт и еду на донбасс\n\nпал лаич сделал движ и хуй с ним\nу меня пропали аппетит и все чувства\n\nдрон летит над окном\nпал лаич, где пво?\n\n(пал лаич)\n\nmister p…\n\nпал лаич пал лаич\nдвижуха движуха движуха\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nя самый лучший президент (damn) меня уважают\nлюди меня любят - поэтому и выбирают\nя еду спасать склад ozon - дрлгы щас летают\nщас такое время - нпз всё догорает бля\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nпал лаич\nпал лаич"
+  },
+  2: {
+    title: "mister p…", artist: "AALESHIN", audio: "track2.mp3",
+    lyrics: "пал лаич пал лаич\nдвижуха движуха движуха\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nя самый лучший президент (damn) меня уважают\nлюди меня любят - поэтому и выбирают\nя еду спасать склад ozon - дрлгы щас летают\nщас такое время - нпз всё догорает бля\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nпал лаич\nпал лаич"
+  },
+  3: {
+    title: "TRADUATOR", artist: "AALESHIN", audio: "track3.mp3",
+    lyrics: "я вьебал ща твой payout\nотдыхаю ща в chateau\nотдыхаю с Алиханом\nмы по тихой, ща по кайфу\n\nне люблю инфоцыганов\nне люблю инфоцыганов\nя ебу их раком в анус\nне люблю инфоцыганов\n\nвижу сделку\ni see dep\nснова слил весь деп\nтонкий сквизит деп\nмне похуй на деп\nмне похуй (а)\n\nАлихан как стал димой, я не заметил\nи снова я красный, я тож не заметил\nнахуй герчика, сольёт весь курс\nнахуй герчика, побреет анус пусть"
+  },
+  4: {
+    title: "sting (us)", artist: "AALESHIN", audio: "track4.mp3",
+    lyrics: "when the anus sad\nit's wants a dick\ntoday im give your kaif\nand anus dont be sad\ngerchik\n\nstilll my soul with your naked anus\nsend it all\nsend it all\ni want\ni want see anus\nits so tasty\nlike gerchik\nwhat this??\nthis is violent song\nсука блят\ngerchik sad"
+  },
+  5: {
+    title: "trader 2", artist: "AALESHIN", audio: "track5.mp3",
+    lyrics: "это пахнет стопом\nно я держу эту сделку\nмы танцуем на уровне\nне издавая звуков\n\nты не моя сука\nнет ты не моя сука\nя потерял голову\nтеперь я трейжу лудку\n\nхочу переставить свои стопы\nпоменять свой ордер\nубить чела, что трейдит со стоплоссом\n\nего нету дома,герчик нахуй даун\nпродает курсы ебаный мудак он\n\nбля, походу я для тебя просто трейдер\nтебя так возбуждает сливать депы\nя в своем трейдинге уже легенда\nя думаю ты не моя игра\n\nмы хотим трахать SONYA\nда, но нас нельзя слышать\nлетим за эмоциями по московской бирже\n\nя буду трейд держать,ведь стоп в моих руках\nты трейдишь бля до смерти\nно есть одно но,\nмы просто пешки в этом сюжете\n\nпрямо как в том фильме\nя волк с уолл стрита\nалександр герчик - ты просто пидор\n\nя иду на свет, но меня наполняет зло\nто, на что я иду гарантирует margin call\nты готова на всё, чтоб словить стоп лосс со мной\nмоя жизнь пиздец FARTCOIN\n\nэто пахнет смертью\nно я держу твою руку\nмы танцуем на уровне\nне издавая звуков\n\nты не моя сука\nнет ты не моя сука\nя потерял голову\nтеперь я трейжу лудку\n\nа я тупой герчик\nа я тупой мудак\nда я недосягаем\nбудто герчик ща\n\nтупой мудак\nбудто герчик\nда я тупой мудак\nбудто я герчик\n\nда я тупой мудак\nбудто я герчик нах\nда я тупой мудак\nту-тупой баран\nтупой старик (а)\nтупой инфоцыган\nа-а-а\nя тоже пидар"
+  },
+  6: {
+    title: "you anus", artist: "AALESHIN", audio: "track6.mp3",
+    lyrics: "я не MOGG'у врать - я скучаю\nфоткал твою жопу- да я ахуеваю\nлюбишь или ненавидешь\nя не понимаю\nда я знаю, хочешь тоже трейдить\nно об этом ты не скажешь\nхочешь заработать много денег в трейде (ха такого не бывает)\nты перестал кидать сетапы\nи я перестал спать\nперестал спать\n\nда, такого не бывает\nхочу чтоб всё было иначе\nпочему сука плачешь?\nслил деп не иначе\nлюбил SONYA когда-то\n(но мне теперь похуй реально)\n\nя знаю хочешь трейдить\nмои трейды наркотик\nни ты ни я не жертвы\nно герчик реально монстр\n\nя знаю хочешь боли\nтвой анус блять наркотик
