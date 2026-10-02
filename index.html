@@ -4,20 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAZANUS — ALBUM</title>
-<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
     --bg: #0a0708;
-    --bg-2: #120c0e;
-    --bg-3: #1a1114;
-    --text: #e8dfd3;
-    --text-2: #8a7f72;
-    --accent: #8b0000;
-    --accent-2: #c9a227;
-    --border: rgba(201, 162, 39, 0.15);
+    --bg-2: #100b0d;
+    --bg-3: #171013;
+    --bg-4: #1f1619;
+    --text: #ece5d9;
+    --text-2: #7a7269;
+    --accent: #b91c1c;
+    --accent-2: #d4af37;
+    --border: rgba(212, 175, 55, 0.08);
+    --border-hover: rgba(212, 175, 55, 0.25);
   }
+
+  html, body { height: 100%; }
 
   body {
     background: var(--bg);
@@ -25,63 +29,62 @@
     font-family: 'Cormorant Garamond', Georgia, serif;
     min-height: 100vh;
     padding-bottom: 100px;
-    position: relative;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Тонкая текстура-зерно */
+  /* Едва заметная текстура */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 1;
     mix-blend-mode: overlay;
   }
 
-  /* Виньетка по краям */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.85) 100%);
-    pointer-events: none;
-    z-index: 2;
-  }
-
+  /* ================== ШАПКА ================== */
   header {
-    position: relative;
-    z-index: 10;
+    position: sticky;
+    top: 0;
+    z-index: 50;
     display: flex;
     align-items: center;
     gap: 24px;
-    padding: 24px 40px;
+    padding: 18px 40px;
+    background: rgba(10,7,8,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
   }
 
   .logo {
     font-family: 'UnifrakturMaguntia', serif;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     color: var(--accent-2);
     text-decoration: none;
     letter-spacing: 0.02em;
-    text-shadow: 0 0 20px rgba(201, 162, 39, 0.4);
     flex-shrink: 0;
+    transition: text-shadow 0.3s;
   }
-  .logo span { color: var(--accent); }
+  .logo:hover { text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
 
   .search {
     flex: 1;
-    max-width: 500px;
+    max-width: 520px;
     display: flex;
     align-items: center;
     background: var(--bg-3);
-    border: 1px solid var(--border);
-    border-radius: 2px;
+    border: 1px solid transparent;
+    border-radius: 6px;
     padding: 10px 16px;
     gap: 10px;
-    margin-left: auto;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .search:focus-within {
+    border-color: var(--border-hover);
+    background: var(--bg-4);
   }
   .search input {
     background: transparent;
@@ -90,90 +93,83 @@
     color: var(--text);
     font-size: 0.95rem;
     width: 100%;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: inherit;
     font-style: italic;
   }
   .search input::placeholder { color: var(--text-2); }
-  .search svg { opacity: 0.5; flex-shrink: 0; }
+  .search svg { opacity: 0.4; flex-shrink: 0; }
 
+  /* ================== КОНТЕЙНЕР ================== */
   .container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 48px 40px;
+    padding: 40px 40px 60px;
     position: relative;
     z-index: 5;
   }
 
-  /* ================== АЛЬБОМ ================== */
+  /* ================== ХЕДЕР АЛЬБОМА ================== */
   .album-head {
     display: flex;
-    gap: 40px;
+    gap: 36px;
     align-items: flex-end;
-    margin-bottom: 56px;
-    position: relative;
+    margin-bottom: 48px;
   }
 
   .album-cover {
-    width: 240px;
-    height: 240px;
-    border-radius: 2px;
+    width: 220px;
+    height: 220px;
+    border-radius: 4px;
     overflow: hidden;
     flex-shrink: 0;
-    background:
-      linear-gradient(135deg, #2a0a0a, #12080a 60%),
-      radial-gradient(circle at 30% 30%, #5c0000, transparent 60%);
-    border: 1px solid var(--accent-2);
-    box-shadow:
-      0 0 0 1px rgba(0,0,0,0.6) inset,
-      0 20px 60px rgba(139, 0, 0, 0.4),
-      0 0 80px rgba(201, 162, 39, 0.15);
+    background: linear-gradient(135deg, #1a0d0d, #0a0708);
+    border: 1px solid var(--border-hover);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'UnifrakturMaguntia', serif;
-    font-size: 5rem;
+    font-size: 4.5rem;
     color: var(--accent-2);
     position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   }
   .album-cover img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    position: relative; z-index: 1;
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; position: relative; z-index: 1;
   }
 
-  .album-meta { flex: 1; min-width: 0; }
+  .album-meta { flex: 1; min-width: 0; padding-bottom: 4px; }
 
   .album-label {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.4em;
-    color: var(--accent-2);
-    margin-bottom: 12px;
+    letter-spacing: 0.35em;
+    color: var(--text-2);
+    margin-bottom: 10px;
     font-weight: 600;
   }
 
   .album-title {
     font-family: 'UnifrakturMaguntia', serif;
-    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-size: clamp(2.4rem, 5.5vw, 4rem);
     font-weight: 400;
-    line-height: 0.95;
-    margin-bottom: 16px;
+    line-height: 1;
+    margin-bottom: 12px;
     color: var(--text);
-    text-shadow:
-      0 0 30px rgba(201, 162, 39, 0.3),
-      0 0 60px rgba(139, 0, 0, 0.4);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
   }
-  .album-title em {
-    color: var(--accent);
-    font-style: normal;
-  }
+  .album-title span { color: var(--accent-2); }
 
   .album-artist {
     color: var(--text-2);
-    font-size: 1.15rem;
-    margin-bottom: 28px;
+    font-size: 1rem;
+    margin-bottom: 26px;
     font-style: italic;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
+  }
+  .album-artist span {
+    color: var(--accent);
+    font-style: normal;
   }
 
   .play-big {
@@ -183,97 +179,73 @@
     background: transparent;
     color: var(--accent-2);
     border: 1px solid var(--accent-2);
-    border-radius: 2px;
-    padding: 12px 32px;
-    font-size: 1rem;
+    border-radius: 4px;
+    padding: 11px 30px;
+    font-size: 0.9rem;
     font-weight: 600;
-    font-family: 'Cormorant Garamond', serif;
-    letter-spacing: 0.15em;
+    font-family: inherit;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
   }
   .play-big:hover {
     background: var(--accent-2);
-    color: #0a0708;
-    box-shadow: 0 0 40px rgba(201, 162, 39, 0.5);
+    color: var(--bg);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
   }
 
   /* ================== СПИСОК ТРЕКОВ ================== */
-  .divider {
-    display: flex;
-    align-items: center;
+  .tracks-head {
+    display: grid;
+    grid-template-columns: 44px 1fr 90px 40px;
     gap: 20px;
-    margin-bottom: 24px;
-    color: var(--accent-2);
-    font-size: 0.8rem;
-    letter-spacing: 0.4em;
+    padding: 0 20px 12px;
+    font-size: 0.72rem;
     text-transform: uppercase;
-  }
-  .divider::before,
-  .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-  }
-  .divider .ornament {
-    font-family: 'UnifrakturMaguntia', serif;
-    font-size: 1.4rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.25em;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
   }
 
   .track {
     display: grid;
-    grid-template-columns: 50px 1fr 100px 50px;
+    grid-template-columns: 44px 1fr 90px 40px;
     gap: 20px;
     align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(201, 162, 39, 0.08);
+    padding: 12px 20px;
+    border-radius: 4px;
     text-decoration: none;
     color: inherit;
     cursor: pointer;
-    transition: background 0.2s, padding 0.2s;
+    transition: background 0.15s;
     position: relative;
   }
-  .track:hover {
-    background: rgba(139, 0, 0, 0.08);
-    padding-left: 24px;
-  }
-  .track::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: var(--accent);
-    transform: scaleY(0);
-    transition: transform 0.25s;
-  }
-  .track:hover::before,
-  .track.active::before { transform: scaleY(1); }
+  .track:hover { background: var(--bg-3); }
 
-  .track.active { background: rgba(139, 0, 0, 0.12); }
+  .track.active { background: var(--bg-3); }
   .track.active .track-name {
     color: var(--accent-2);
-    text-shadow: 0 0 20px rgba(201, 162, 39, 0.4);
   }
 
   .track-num {
     font-family: 'UnifrakturMaguntia', serif;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     color: var(--text-2);
     text-align: center;
-    height: 26px;
+    height: 24px;
+    line-height: 24px;
     position: relative;
-    line-height: 26px;
+    transition: color 0.2s;
   }
+  .track:hover .track-num { color: var(--accent-2); }
+
   .track-num .num-text { display: block; }
   .track-num .play-icon {
     display: none;
-    line-height: 26px;
-    font-size: 1rem;
+    line-height: 24px;
+    font-size: 0.85rem;
     color: var(--accent-2);
   }
   .track:hover .track-num .num-text { display: none; }
@@ -284,50 +256,51 @@
   .track-info { min-width: 0; }
 
   .track-name {
-    font-size: 1.25rem;
+    font-size: 1.05rem;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 2px;
     transition: color 0.2s;
   }
 
   .track-artist {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     color: var(--text-2);
     font-style: italic;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    letter-spacing: 0.05em;
+    margin-top: 1px;
   }
 
   .track-duration {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     color: var(--text-2);
     text-align: right;
-    font-style: italic;
+    font-variant-numeric: tabular-nums;
   }
 
   .track-ornament {
     text-align: right;
     color: var(--accent);
     font-family: 'UnifrakturMaguntia', serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
     opacity: 0;
     transition: opacity 0.2s;
   }
-  .track:hover .track-ornament { opacity: 0.6; }
+  .track:hover .track-ornament { opacity: 0.5; }
+  .track.active .track-ornament { opacity: 1; color: var(--accent-2); }
 
-  /* ================== НИЖНИЙ ПЛЕЕР ================== */
+  /* ================== ПЛЕЕР ================== */
   .player {
     position: fixed;
     left: 0; right: 0; bottom: 0;
-    height: 92px;
-    background: linear-gradient(180deg, rgba(18,12,14,0.98), rgba(10,7,8,0.98));
-    border-top: 1px solid var(--accent-2);
-    box-shadow: 0 -20px 60px rgba(0,0,0,0.8);
+    height: 86px;
+    background: rgba(16, 11, 13, 0.96);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid var(--border-hover);
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
@@ -342,26 +315,25 @@
   .now-playing {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     min-width: 0;
   }
   .now-cover {
-    width: 56px; height: 56px;
-    border-radius: 2px;
-    background: linear-gradient(135deg, #2a0a0a, #12080a);
-    border: 1px solid var(--accent-2);
+    width: 54px; height: 54px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, #1a0d0d, #0a0708);
+    border: 1px solid var(--border-hover);
     flex-shrink: 0;
     overflow: hidden;
   }
   .now-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .now-info { min-width: 0; }
   .now-title {
-    font-size: 1.05rem; font-weight: 600;
+    font-size: 0.98rem; font-weight: 600;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    color: var(--text);
   }
   .now-artist {
-    font-size: 0.85rem; color: var(--text-2);
+    font-size: 0.8rem; color: var(--text-2);
     font-style: italic;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
@@ -376,11 +348,11 @@
   .controls-buttons {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 22px;
   }
   .ctrl {
     background: transparent; border: none; cursor: pointer;
-    color: var(--text); font-size: 1.1rem;
+    color: var(--text); font-size: 1rem;
     opacity: 0.7; transition: opacity 0.15s, color 0.15s;
     display: flex; align-items: center; justify-content: center;
     width: 32px; height: 32px;
@@ -388,18 +360,18 @@
   .ctrl:hover { opacity: 1; color: var(--accent-2); }
 
   .play-main {
-    width: 44px; height: 44px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     background: transparent;
     border: 1px solid var(--accent-2);
     color: var(--accent-2);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     opacity: 1;
   }
   .play-main:hover {
     background: var(--accent-2);
-    color: #0a0708;
-    box-shadow: 0 0 30px rgba(201, 162, 39, 0.6);
+    color: var(--bg);
+    box-shadow: 0 0 24px rgba(212, 175, 55, 0.5);
   }
 
   .progress {
@@ -407,30 +379,33 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-2);
-    font-style: italic;
+    font-variant-numeric: tabular-nums;
   }
   .progress input[type="range"] {
     flex: 1;
     -webkit-appearance: none;
     appearance: none;
     height: 2px;
-    background: rgba(201, 162, 39, 0.2);
+    background: rgba(212, 175, 55, 0.15);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
   }
   .progress input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 12px; height: 12px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: var(--accent-2);
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(201, 162, 39, 0.6);
+    transition: transform 0.15s;
+  }
+  .progress input[type="range"]:hover::-webkit-slider-thumb {
+    transform: scale(1.3);
   }
   .progress input[type="range"]::-moz-range-thumb {
-    width: 12px; height: 12px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: var(--accent-2);
     border: none;
@@ -442,13 +417,14 @@
     align-items: center;
     justify-content: flex-end;
     gap: 10px;
-    color: var(--accent-2);
+    color: var(--text-2);
+    font-size: 0.9rem;
   }
   .volume input[type="range"] {
-    width: 100px;
+    width: 90px;
     -webkit-appearance: none;
     height: 2px;
-    background: rgba(201, 162, 39, 0.2);
+    background: rgba(212, 175, 55, 0.15);
     border-radius: 2px;
     outline: none;
   }
@@ -466,51 +442,53 @@
     border: none;
   }
 
+  /* ================== МОБИЛА ================== */
   @media (max-width: 720px) {
-    header { padding: 16px; gap: 12px; }
-    .logo { font-size: 1.3rem; }
+    header { padding: 14px 16px; gap: 12px; }
+    .logo { font-size: 1.25rem; }
     .container { padding: 24px 16px; }
 
     .album-head {
       flex-direction: column;
       align-items: flex-start;
-      gap: 24px;
-      margin-bottom: 36px;
+      gap: 20px;
+      margin-bottom: 32px;
     }
-    .album-cover { width: 100%; max-width: 260px; height: auto; aspect-ratio: 1/1; }
-    .album-title { font-size: 2.4rem; }
+    .album-cover { width: 100%; max-width: 240px; height: auto; aspect-ratio: 1/1; }
+    .album-title { font-size: 2.2rem; }
 
+    .tracks-head { display: none; }
     .track {
-      grid-template-columns: 36px 1fr 36px;
+      grid-template-columns: 36px 1fr 40px;
       gap: 12px;
-      padding: 12px 8px;
+      padding: 10px 12px;
     }
     .track-duration { display: none; }
-    .track-name { font-size: 1.05rem; }
+    .track-name { font-size: 1rem; }
 
     .player {
       grid-template-columns: 1fr auto;
       gap: 12px;
       padding: 0 16px;
-      height: 76px;
+      height: 72px;
     }
     .progress { display: none; }
     .now-cover { width: 44px; height: 44px; }
-    .now-title { font-size: 0.95rem; }
+    .now-title { font-size: 0.9rem; }
     .volume { display: none; }
-    .controls-buttons { gap: 12px; }
+    .controls-buttons { gap: 14px; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="logo">Kazanus<span>·</span>Album</a>
+  <a href="index.html" class="logo">Kazanus</a>
   <div class="search">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
       <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
     </svg>
-    <input type="text" placeholder="Найти в летописи…">
+    <input type="text" placeholder="Поиск…">
   </div>
 </header>
 
@@ -521,17 +499,18 @@
       <img src="cover.jpg" alt="" onerror="this.style.display='none'">
     </div>
     <div class="album-meta">
-      <div class="album-label">· Запечатанная летопись ·</div>
-      <h1 class="album-title"><em>A</em>lbum <em>A</em>?an<span>·</span></h1>
-      <div class="album-artist">KAZANUS · 10 треков · MMXXV</div>
-      <button class="play-big" onclick="playFirst()">✦ Слушать ✦</button>
+      <div class="album-label">Альбом</div>
+      <h1 class="album-title">KAZAN<span>US</span></h1>
+      <div class="album-artist"><span>10 треков</span> · MMXXV</div>
+      <button class="play-big" onclick="playFirst()">Слушать</button>
     </div>
   </div>
 
-  <div class="divider">
-    <span class="ornament">❦</span>
-    <span>Список треков</span>
-    <span class="ornament">❦</span>
+  <div class="tracks-head">
+    <span>#</span>
+    <span>Название</span>
+    <span style="text-align:right">Время</span>
+    <span></span>
   </div>
 
   <div id="tracks"></div>
@@ -550,9 +529,9 @@
 
   <div class="controls">
     <div class="controls-buttons">
-      <button class="ctrl" onclick="prevTrack()" title="Назад">⏮</button>
-      <button class="ctrl play-main" id="playBtn" onclick="togglePlay()" title="Играть">▶</button>
-      <button class="ctrl" onclick="nextTrack()" title="Вперёд">⏭</button>
+      <button class="ctrl" onclick="prevTrack()">⏮</button>
+      <button class="ctrl play-main" id="playBtn" onclick="togglePlay()">▶</button>
+      <button class="ctrl" onclick="nextTrack()">⏭</button>
     </div>
     <div class="progress">
       <span id="curTime">0:00</span>
@@ -570,7 +549,6 @@
 <audio id="audio"></audio>
 
 <script>
-// ================== 10 ТРЕКОВ ==================
 const TRACKS = [
   { id: 1,  title: "intro (пво)",                        artist: "KAZANUS", audio: "track1.mp3"  },
   { id: 2,  title: "mister p…",                          artist: "KAZANUS", audio: "track2.mp3"  },
@@ -588,7 +566,7 @@ const listEl = document.getElementById("tracks");
 listEl.innerHTML = TRACKS.map((t, i) => `
   <a class="track" data-id="${t.id}" href="track.html?id=${t.id}">
     <div class="track-num">
-      <span class="num-text">${String(i + 1).padStart(2, "0")}</span>
+      <span class="num-text">${i + 1}</span>
       <span class="play-icon">▶</span>
     </div>
     <div class="track-info">
@@ -596,11 +574,10 @@ listEl.innerHTML = TRACKS.map((t, i) => `
       <div class="track-artist">${t.artist}</div>
     </div>
     <div class="track-duration" data-dur>--:--</div>
-    <div class="track-ornament">❧</div>
+    <div class="track-ornament">❦</div>
   </a>
 `).join("");
 
-// ================== ПЛЕЕР ==================
 const audio = document.getElementById("audio");
 const player = document.getElementById("player");
 const playBtn = document.getElementById("playBtn");
@@ -638,13 +615,8 @@ function playTrack(i) {
 
 function togglePlay() {
   if (currentIndex < 0) { playTrack(0); return; }
-  if (audio.paused) {
-    audio.play();
-    playBtn.textContent = "⏸";
-  } else {
-    audio.pause();
-    playBtn.textContent = "▶";
-  }
+  if (audio.paused) { audio.play(); playBtn.textContent = "⏸"; }
+  else { audio.pause(); playBtn.textContent = "▶"; }
 }
 
 function nextTrack() {
@@ -687,14 +659,10 @@ audio.addEventListener("loadedmetadata", () => {
 });
 
 audio.addEventListener("ended", nextTrack);
-
 seek.addEventListener("input", () => {
   if (audio.duration) audio.currentTime = (seek.value / 100) * audio.duration;
 });
-
-volume.addEventListener("input", () => {
-  audio.volume = volume.value;
-});
+volume.addEventListener("input", () => { audio.volume = volume.value; });
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space" && e.target.tagName !== "INPUT") {
