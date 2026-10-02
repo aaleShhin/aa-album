@@ -83,7 +83,43 @@
   .volume { display:flex; align-items:center; justify-content:flex-end; gap:10px; color:var(--text-2); font-size:0.9rem; }
   .volume input[type="range"] { width:90px; -webkit-appearance:none; height:3px; background:rgba(255,255,255,0.12); border-radius:2px; outline:none; }
   .volume input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; border-radius:50%; background:var(--text); cursor:pointer; }
-  @media (max-width:720px) {
+  .rating {
+  display: flex; gap: 10px; margin-top: 16px;
+}
+.rate-btn {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: #232327;
+  color: #f5f5f7;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.rate-btn:hover { background: #2e2e34; transform: scale(1.05); }
+.rate-btn.active {
+  border-color: #2b7fff;
+  background: #1e3a5f;
+  color: #fff;
+}
+.rate-btn:active { transform: scale(0.95); }
+
+.rating-info {
+  font-size: 0.82rem;
+  color: #8a8a92;
+  margin-top: 10px;
+  min-height: 1.2em;
+}
+.rating-info b { color: #ffdb4d; }
+
+@media (max-width: 720px) {
+  .rate-btn { width: 48px; height: 48px; font-size: 0.95rem; }
+}
+ 
+ @media (max-width:720px) {
     header { padding:14px 16px; gap:12px; }
     .logo { font-size:1rem; }
     .container { padding:24px 16px; }
@@ -130,6 +166,13 @@
       <h1 class="album-title">KAZANUS</h1>
       <div class="album-artist">AALESHIN · 10 треков</div>
       <button class="play-big" onclick="playFirst()">▶ Слушать</button>
+
+<div class="rating" id="rating">
+  <button class="rate-btn" data-score="30">30</button>
+  <button class="rate-btn" data-score="60">60</button>
+  <button class="rate-btn" data-score="90">90</button>
+</div>
+<div class="rating-info" id="ratingInfo"></div>
     </div>
   </div>
 
@@ -393,6 +436,55 @@ document.addEventListener("keydown", (e) => {
     togglePlay();
   }
 });
+// ============ СИСТЕМА ОЦЕНОК ============
+// Пока сохраняется в браузере каждого пользователя.
+// Позже заменим на Firebase, чтобы все видели одно.
+
+const RATE_KEY = "kazanus_rating";
+
+function getUserRating() {
+  return Number(localStorage.getItem(RATE_KEY)) || 0;
+}
+function setUserRating(v) {
+  localStorage.setItem(RATE_KEY, v);
+}
+
+// Восстанавливаем прошлую оценку при загрузке
+function initRating() {
+  const userScore = getUserRating();
+  document.querySelectorAll(".rate-btn").forEach(btn => {
+    if (Number(btn.dataset.score) === userScore) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      const score = Number(btn.dataset.score);
+      const current = getUserRating();
+      if (current === score) {
+        // повторный клик — снимаем оценку
+        setUserRating(0);
+        document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("active"));
+        updateRatingInfo(0);
+      } else {
+        setUserRating(score);
+        document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        updateRatingInfo(score);
+      }
+    });
+  });
+  updateRatingInfo(userScore);
+}
+
+function updateRatingInfo(score) {
+  const el = document.getElementById("ratingInfo");
+  if (!el) return;
+  if (score === 0) {
+    el.textContent = "Оцени альбом — 30, 60 или 90";
+  } else {
+    el.innerHTML = `Твоя оценка: <b>${score}</b>`;
+  }
+}
+
+initRating();
+  
 </script>
 </body>
 </html>
