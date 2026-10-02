@@ -18,6 +18,7 @@
     font-family: 'Inter', -apple-system, 'Segoe UI', system-ui, sans-serif;
     min-height: 100vh; padding-bottom: 100px;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   header {
     position: sticky; top: 0; z-index: 50;
@@ -37,9 +38,7 @@
     display: flex; align-items: center;
     background: var(--bg-3); border-radius: 10px;
     padding: 10px 16px; gap: 10px;
-    transition: background 0.2s;
   }
-  .search:focus-within { background: #26262c; }
   .search input {
     background: transparent; border: none; outline: none;
     color: var(--text); font-size: 0.9rem; width: 100%; font-family: inherit;
@@ -134,14 +133,80 @@
   .lyrics-btn {
     display: flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 8px;
-    color: var(--text-2); text-decoration: none;
-    transition: background 0.15s, color 0.15s;
+    color: var(--text-2); background: transparent; border: none;
+    cursor: pointer; transition: background 0.15s, color 0.15s;
   }
-  .lyrics-btn:hover {
-    background: rgba(255,255,255,0.08);
-    color: var(--accent);
-  }
+  .lyrics-btn:hover { background: rgba(255,255,255,0.08); color: var(--accent); }
+  .lyrics-btn.active { color: var(--accent); background: rgba(255,219,77,0.1); }
   .lyrics-btn svg { display: block; }
+
+  /* ================== БОКОВАЯ ПАНЕЛЬ ТЕКСТА ================== */
+  .lyrics-panel {
+    position: fixed;
+    top: 0; right: 0;
+    width: min(480px, 92vw);
+    height: 100vh;
+    background: #14141a;
+    border-left: 1px solid var(--border);
+    z-index: 200;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column;
+    box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+  }
+  .lyrics-panel.open { transform: translateX(0); }
+
+  .lyrics-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .lyrics-header-info { min-width: 0; flex: 1; }
+  .lyrics-header-title {
+    font-size: 1rem; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .lyrics-header-artist {
+    font-size: 0.8rem; color: var(--text-2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+  .lyrics-close {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text-2); font-size: 1.2rem;
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0; margin-left: 12px;
+  }
+  .lyrics-close:hover { background: var(--bg-3); color: var(--text); }
+
+  .lyrics-body {
+    flex: 1; overflow-y: auto;
+    padding: 28px 32px 40px;
+    font-size: 1.15rem;
+    line-height: 1.85;
+    color: #d8d8de;
+    white-space: pre-line;
+    text-align: center;
+    font-weight: 500;
+  }
+  .lyrics-body::-webkit-scrollbar { width: 6px; }
+  .lyrics-body::-webkit-scrollbar-thumb {
+    background: #2a2a30; border-radius: 3px;
+  }
+  .lyrics-body::-webkit-scrollbar-thumb:hover { background: #3a3a42; }
+
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .overlay.visible { opacity: 1; pointer-events: auto; }
+
   .player {
     position: fixed; left: 0; right: 0; bottom: 0;
     height: 86px; background: rgba(22, 22, 26, 0.96);
@@ -225,6 +290,7 @@
     width: 12px; height: 12px; border-radius: 50%;
     background: var(--text); border: none;
   }
+
   @media (max-width: 720px) {
     header { padding: 14px 16px; gap: 12px; }
     .logo { font-size: 1rem; }
@@ -233,8 +299,19 @@
     .album-cover { width: 100%; max-width: 240px; height: auto; aspect-ratio: 1/1; }
     .album-title { font-size: 2rem; }
     .tracks-head { display: none; }
-    .track { grid-template-columns: 36px 1fr 36px; gap: 12px; padding: 10px 12px; }
+    .track { grid-template-columns: 36px 1fr 40px; gap: 12px; padding: 10px 12px; }
     .track-duration { display: none; }
+    .lyrics-panel {
+      width: 100%;
+      top: auto; bottom: 0;
+      height: 75vh;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      border-radius: 16px 16px 0 0;
+      transform: translateY(100%);
+    }
+    .lyrics-panel.open { transform: translateY(0); }
+    .lyrics-body { font-size: 1.05rem; padding: 22px 20px 40px; }
     .player {
       grid-template-columns: 1fr auto; gap: 12px;
       padding: 0 16px; height: 72px;
@@ -246,7 +323,6 @@
     .controls-buttons { gap: 14px; }
     .ctrl { width: 34px; height: 34px; }
     .play-main { width: 42px; height: 42px; }
-    .lyrics-btn { width: 30px; height: 30px; }
   }
 </style>
 </head>
@@ -330,144 +406,36 @@
 
 <audio id="audio"></audio>
 
+<!-- ================== ПАНЕЛЬ ТЕКСТА ================== -->
+<div class="overlay" id="overlay" onclick="closeLyrics()"></div>
+<aside class="lyrics-panel" id="lyricsPanel">
+  <div class="lyrics-header">
+    <div class="lyrics-header-info">
+      <div class="lyrics-header-title" id="lpTitle">—</div>
+      <div class="lyrics-header-artist" id="lpArtist">—</div>
+    </div>
+    <button class="lyrics-close" onclick="closeLyrics()" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="lyrics-body" id="lpBody">—</div>
+</aside>
+
 <script>
 const TRACKS = [
-  { id: 1,  title: "intro (пво)",                        artist: "AALESHIN", audio: "track1.mp3"  },
-  { id: 2,  title: "mister p…",                          artist: "AALESHIN", audio: "track2.mp3"  },
-  { id: 3,  title: "TRADUATOR",                          artist: "AALESHIN", audio: "track3.mp3"  },
-  { id: 4,  title: "sting (us)",                         artist: "AALESHIN", audio: "track4.mp3"  },
-  { id: 5,  title: "trader 2",                           artist: "AALESHIN", audio: "track5.mp3"  },
-  { id: 6,  title: "you anus",                           artist: "AALESHIN", audio: "track6.mp3"  },
-  { id: 7,  title: "finance swag ft. королевский XVII",  artist: "AALESHIN", audio: "track7.mp3"  },
-  { id: 8,  title: "info shot",                          artist: "AALESHIN", audio: "track8.mp3"  },
-  { id: 9,  title: "dima double",                        artist: "AALESHIN", audio: "track9.mp3"  },
-  { id: 10, title: "le secret d'Alihan",                 artist: "AALESHIN", audio: "track10.mp3" }
-];
-
-const listEl = document.getElementById("tracks");
-listEl.innerHTML = TRACKS.map((t, i) => `
-  <div class="track" data-id="${t.id}">
-    <div class="track-num">
-      <span class="num-text">${i + 1}</span>
-      <span class="play-icon">▶</span>
-    </div>
-    <div class="track-info">
-      <div class="track-name">${t.title}</div>
-      <div class="track-artist">${t.artist}</div>
-    </div>
-    <div class="track-duration" data-dur>--:--</div>
-    <a class="lyrics-btn" href="track.html?id=${t.id}" title="Текст песни">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 6h16M4 12h16M4 18h10"/>
-      </svg>
-    </a>
-  </div>
-`).join("");
-
-function fmtDuration(sec) {
-  if (!sec || isNaN(sec) || !isFinite(sec)) return "--:--";
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60).toString().padStart(2, "0");
-  return m + ":" + s;
-}
-TRACKS.forEach(t => {
-  const probe = document.createElement("audio");
-  probe.preload = "metadata";
-  probe.src = t.audio;
-  probe.addEventListener("loadedmetadata", () => {
-    const el = document.querySelector(`.track[data-id="${t.id}"] [data-dur]`);
-    if (el) el.textContent = fmtDuration(probe.duration);
-  });
-});
-
-const audio = document.getElementById("audio");
-const player = document.getElementById("player");
-const playBtn = document.getElementById("playBtn");
-const npTitle = document.getElementById("npTitle");
-const npArtist = document.getElementById("npArtist");
-const seek = document.getElementById("seek");
-const curTime = document.getElementById("curTime");
-const durTime = document.getElementById("durTime");
-const volume = document.getElementById("volume");
-
-let currentIndex = -1;
-
-function setPlayIcon() {
-  document.getElementById("playIcon").innerHTML = '<path d="M8 5v14l11-7z"/>';
-}
-function setPauseIcon() {
-  document.getElementById("playIcon").innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
-}
-
-function fmt(s) {
-  if (!s || isNaN(s)) return "0:00";
-  const m = Math.floor(s / 60);
-  const r = Math.floor(s % 60).toString().padStart(2, "0");
-  return m + ":" + r;
-}
-
-function playTrack(i) {
-  if (i < 0 || i >= TRACKS.length) return;
-  currentIndex = i;
-  const t = TRACKS[i];
-  audio.src = t.audio;
-  audio.play().catch(e => console.error("Не удалось воспроизвести:", e));
-  npTitle.textContent = t.title;
-  npArtist.textContent = t.artist;
-  player.classList.add("visible");
-  setPauseIcon();
-
-  document.querySelectorAll(".track").forEach(el => el.classList.remove("active"));
-  const active = document.querySelector(`.track[data-id="${t.id}"]`);
-  if (active) active.classList.add("active");
-}
-
-function togglePlay() {
-  if (currentIndex < 0) { playTrack(0); return; }
-  if (audio.paused) { audio.play(); setPauseIcon(); }
-  else { audio.pause(); setPlayIcon(); }
-}
-
-function nextTrack() {
-  if (currentIndex < 0) return playTrack(0);
-  playTrack((currentIndex + 1) % TRACKS.length);
-}
-
-function prevTrack() {
-  if (currentIndex < 0) return playTrack(0);
-  playTrack((currentIndex - 1 + TRACKS.length) % TRACKS.length);
-}
-
-function playFirst() { playTrack(0); }
-
-document.querySelectorAll(".track").forEach((el, i) => {
-  el.addEventListener("click", (e) => {
-    if (e.target.closest(".lyrics-btn")) return;
-    if (currentIndex === i) togglePlay();
-    else playTrack(i);
-  });
-});
-
-audio.addEventListener("timeupdate", () => {
-  if (audio.duration) {
-    seek.value = (audio.currentTime / audio.duration) * 100;
-    curTime.textContent = fmt(audio.currentTime);
-    durTime.textContent = fmt(audio.duration);
-  }
-});
-
-audio.addEventListener("ended", nextTrack);
-seek.addEventListener("input", () => {
-  if (audio.duration) audio.currentTime = (seek.value / 100) * audio.duration;
-});
-volume.addEventListener("input", () => { audio.volume = volume.value; });
-
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space" && e.target.tagName !== "INPUT") {
-    e.preventDefault();
-    togglePlay();
-  }
-});
-</script>
-</body>
-</html>
+  { id: 1,  title: "intro (пво)", artist: "AALESHIN", audio: "track1.mp3",
+    lyrics: "а - он не даёт спать\nпал лаич сделал движ и это не со зла\n\nя подпишу контракт и еду на донбасс\nя подпишу контракт и еду на донбасс\n\nпал лаич сделал движ и хуй с ним\nу меня пропали аппетит и все чувства\n\nдрон летит над окном\nпал лаич, где пво?\n\n(пал лаич)\n\nmister p…\n\nпал лаич пал лаич\nдвижуха движуха движуха\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nя самый лучший президент (damn) меня уважают\nлюди меня любят - поэтому и выбирают\nя еду спасать склад ozon - дрлгы щас летают\nщас такое время - нпз всё догорает бля\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nпал лаич\nпал лаич" },
+  { id: 2,  title: "mister p…", artist: "AALESHIN", audio: "track2.mp3",
+    lyrics: "пал лаич пал лаич\nдвижуха движуха движуха\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nя самый лучший президент (damn) меня уважают\nлюди меня любят - поэтому и выбирают\nя еду спасать склад ozon - дрлгы щас летают\nщас такое время - нпз всё догорает бля\n\nпрезидент пал лаич - я создантдля двидухи\nпрезидент пал лаич - я создантдля двидухи\nкрылатые ракеты издают крутые звуки\nкрылатые ракеты спасут меня от скуки\n\nпал лаич\nпал лаич" },
+  { id: 3,  title: "TRADUATOR", artist: "AALESHIN", audio: "track3.mp3",
+    lyrics: "я вьебал ща твой payout\nотдыхаю ща в chateau\nотдыхаю с Алиханом\nмы по тихой, ща по кайфу\n\nне люблю инфоцыганов\nне люблю инфоцыганов\nя ебу их раком в анус\nне люблю инфоцыганов\n\nвижу сделку\ni see dep\nснова слил весь деп\nтонкий сквизит деп\nмне похуй на деп\nмне похуй (а)\n\nАлихан как стал димой, я не заметил\nи снова я красный, я тож не заметил\nнахуй герчика, сольёт весь курс\nнахуй герчика, побреет анус пусть" },
+  { id: 4,  title: "sting (us)", artist: "AALESHIN", audio: "track4.mp3",
+    lyrics: "when the anus sad\nit's wants a dick\ntoday im give your kaif\nand anus dont be sad\ngerchik\n\nstilll my soul with your naked anus\nsend it all\nsend it all\ni want\ni want see anus\nits so tasty\nlike gerchik\nwhat this??\nthis is violent song\nсука блят\ngerchik sad" },
+  { id: 5,  title: "trader 2", artist: "AALESHIN", audio: "track5.mp3",
+    lyrics: "это пахнет стопом\nно я держу эту сделку\nмы танцуем на уровне\nне издавая звуков\n\nты не моя сука\nнет ты не моя сука\nя потерял голову\nтеперь я трейжу лудку\n\nхочу переставить свои стопы\nпоменять свой ордер\nубить чела, что трейдит со стоплоссом\n\nего нету дома,герчик нахуй даун\nпродает курсы ебаный мудак он\n\nбля, походу я для тебя просто трейдер\nтебя так возбуждает сливать депы\nя в своем трейдинге уже легенда\nя думаю ты не моя игра\n\nмы хотим трахать SONYA\nда, но нас нельзя слышать\nлетим за эмоциями по московской бирже\n\nя буду трейд держать,ведь стоп в моих руках\nты трейдишь бля до смерти\nно есть одно но,\nмы просто пешки в этом сюжете\n\nпрямо как в том фильме\nя волк с уолл стрита\nалександр герчик - ты просто пидор\n\nя иду на свет, но меня наполняет зло\nто, на что я иду гарантирует margin call\nты готова на всё, чтоб словить стоп лосс со мной\nмоя жизнь пиздец FARTCOIN\n\nэто пахнет смертью\nно я держу твою руку\nмы танцуем на уровне\nне издавая звуков\n\nты не моя сука\nнет ты не моя сука\nя потерял голову\nтеперь я трейжу лудку\n\nа я тупой герчик\nа я тупой мудак\nда я недосягаем\nбудто герчик ща\n\nтупой мудак\nбудто герчик\nда я тупой мудак\nбудто я герчик\n\nда я тупой мудак\nбудто я герчик нах\nда я тупой мудак\nту-тупой баран\nтупой старик (а)\nтупой инфоцыган\nа-а-а\nя тоже пидар" },
+  { id: 6,  title: "you anus", artist: "AALESHIN", audio: "track6.mp3",
+    lyrics: "я не MOGG'у врать - я скучаю\nфоткал твою жопу- да я ахуеваю\nлюбишь или ненавидешь\nя не понимаю\nда я знаю, хочешь тоже трейдить\nно об этом ты не скажешь\nхочешь заработать много денег в трейде (ха такого не бывает)\nты перестал кидать сетапы\nи я перестал спать\nперестал спать\n\nда, такого не бывает\nхочу чтоб всё было иначе\nпочему сука плачешь?\nслил деп не иначе\nлюбил SONYA когда-то\n(но мне теперь похуй реально)\n\nя знаю хочешь трейдить\nмои трейды наркотик\nни ты ни я не жертвы\nно герчик реально монстр\n\nя знаю хочешь боли\nтвой анус блять наркотик\nтвой анус блять наркотик\nя знаю, что ты хочешь\nтвой анус блять наркотик\nпусти под кожу\n(сука давай скорее)\nбляя\ndouble RR\n9mice и Kai\nя знаю, что я сделал очень много damage\n\nтвой анус блять наркотик, я не знаю что дальше\n\nи мне похуй на джинсы\nтвой анус блять наркотик\n\nи ты ни я не жертвы\nно для тебя я монстр\nя очарован трейдом\nгерчик - реально монстр" },
+  { id: 7,  title: "finance swag ft. королевский XVII", artist: "AALESHIN", audio: "track7.mp3",
+    lyrics: "он белый парень, с белым носом я белый с мозгами\nя ебашу так, что нету сил дойти до спальни\nя вырос без отца, но во мне всегда был характер\nи всё, за что берусь приносит успех и славу\nхоть в перемешку с кровью, я не золотой мальчик\nбыки не любят крыс, я не повторяю дважды\nфинансовый свег, нахуй фнс и банки\ntornado cash, metamask,чужие карты\n\nмой ментор герчик, убьет за проценты\nдоллары и евро, высокая стабильность\nфинансовый свег,сложные проценты\n5к за месяц, где мои аплодисменты?\n\nак47 свд и макаров\n\nебашу так, что нету сил дойти до спальни\nфинансовый свег, я скупал все курсы за день\nпрошёл курсы и не вернусь обратно\nха я не вернусь обратно\n(обратно)" },
+  { id: 8,  title: "info shot", artist: "AALESHIN", audio: "track8.mp3",
+    lyrics: "да я ща\n\nя ебу инфоцыганов да прямо в анал\nя ебу инфоцыганов сука прямо в очко\nя ебу инфоцыганов да прямо в анал\nя ебу инфоцыганов да прямо в анал\n\nмоя гитара 1969 - скольжу ей по ебалу герчика\nя залил весь деп в одну сделку (бля)\nда капитал больше, чем квартира в мск\nдумал позвать кая, но он будет без фита\n\n800к за квартиру\nя не следую расходам\nмне похуй, я не экономлю\n\nя хочу анус герчика, отрубить ему все руки, чтобы не продал больше курсов\nне повелись же люди\n\nя хочу спасти всех людей\nот ебаных инфоцыганов\n\nя ебу инфоцыганов да прямо в анал\nя ебу инфоцыганов сука прямо в очко\nя ебу инфоцыганов да прямо в анал\nя ебу инфоцыганов да прямо в анал\n\n(пал лаич)\n(блин бейби ваттафак?)\n(коч братан)\n(коч братан)" },
+  { id: 9,  title: "dima double", artist: "AALESHIN", audio: "track9.mp3",
+    lyrics: "блин бейби ваттафак\nпью дешевый cremant\nя типо герчик сука\nда я типо мудак\nв салоне ща жара\nты Дима, не Алихан\nмы пьяные навсегда\n(коч братан)\nона не хотела бы трейдить по герчику\nно мы сливаем депы, слили депы, слили депы\ni see dead gerchik\nон за мной ща бежит\n\nхотел показать анус - нахуй он иди\nнахуй иди герчик\nда ты просто нахуй иди\nблин герчик иди нахуй бля\nгерчик иди нахуй бля\nэто анус герчик (типо коч братан)\nпошел нахуй бля\n\nблин, Дима ваттафак кого хуя а?\nты стал бля Алиханом и не сказал мне бля\nсука ты не сказал\nты мне не сказал\nона не хотела бы трейдить по герчику\nно мы слили анус\nслили анус\nслили анус\n
