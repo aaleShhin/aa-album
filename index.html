@@ -84,7 +84,7 @@
   .volume input[type="range"] { width:90px; -webkit-appearance:none; height:3px; background:rgba(255,255,255,0.12); border-radius:2px; outline:none; }
   .volume input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; border-radius:50%; background:var(--text); cursor:pointer; }
   .rating {
-  display: flex; gap: 10px; margin-top: 12px;
+  display: flex; gap: 10px; margin-top: 16px;
 }
 .rate-btn {
   width: 54px; height: 54px;
@@ -118,6 +118,9 @@
 @media (max-width: 720px) {
   .rate-btn { width: 48px; height: 48px; font-size: 0.95rem; }
 }
+
+
+
  
  @media (max-width:720px) {
     header { padding:14px 16px; gap:12px; }
@@ -167,13 +170,21 @@
       <div class="album-artist">AALESHIN · 10 треков</div>
       <button class="play-big" onclick="playFirst()">▶ Слушать</button>
 
+<!-- HTML: замени старые кнопки на этот блок -->
 <div class="rating" id="rating">
-  <button class="rate-btn" data-score="30">30</button>
-  <button class="rate-btn" data-score="60">60</button>
-  <button class="rate-btn" data-score="90">90</button>
+  <button class="rate-btn" data-score="30">
+    <span class="rate-num">30</span>
+    <span class="rate-count" id="count-30">0</span>
+  </button>
+  <button class="rate-btn" data-score="60">
+    <span class="rate-num">60</span>
+    <span class="rate-count" id="count-60">0</span>
+  </button>
+  <button class="rate-btn" data-score="90">
+    <span class="rate-num">90</span>
+    <span class="rate-count" id="count-90">0</span>
+  </button>
 </div>
-    </div>
-  </div>
 
   <div class="tracks-head">
     <span>#</span>
@@ -439,38 +450,62 @@ document.addEventListener("keydown", (e) => {
 // Пока сохраняется в браузере каждого пользователя.
 // Позже заменим на Firebase, чтобы все видели одно.
 
+// ============ СИСТЕМА ОЦЕНОК (общая через CountAPI) ============
 const RATE_KEY = "kazanus_rating";
+const API_BASE = "https://api.countapi.xyz";
+const KEYS = {
+  30: "kazanus-album-30",
+  60: "kazanus-album-60",
+  90: "kazanus-album-90"
+};
 
-function getUserRating() {
-  return Number(localStorage.getItem(RATE_KEY)) || 0;
-}
-function setUserRating(v) {
-  localStorage.setItem(RATE_KEY, v);
+async function loadCounts() {
+  let maxCount = 0, leadingScore = null;
+  for (const score of [30, 60, 90]) {
+    try {
+      const res = await fetch(`${API_BASE}/get/${KEYS[score]}`);
+      const data = await res.json();
+      const count = data.value || 0;
+      const el = document.getElementById(`count-${score}`);
+      if (el) el.textContent = count;
+      if (count > maxCount) { maxCount = count; leadingScore = score; }
+    } catch (e) {
+      const el = document.getElementById(`count-${score}`);
+      if (el) el.textContent = "—";
+    }
+  }
+  document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("leading"));
+  if (leadingScore && maxCount > 0) {
+    document.querySelector(`.rate-btn[data-score="${leadingScore}"]`)?.classList.add("leading");
+  }
 }
 
-// Восстанавливаем прошлую оценку при загрузке
 function initRating() {
-  const userScore = getUserRating();
+  const userScore = Number(localStorage.getItem(RATE_KEY)) || 0;
   document.querySelectorAll(".rate-btn").forEach(btn => {
     if (Number(btn.dataset.score) === userScore) btn.classList.add("active");
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const score = Number(btn.dataset.score);
-      const current = getUserRating();
+      const current = Number(localStorage.getItem(RATE_KEY));
       if (current === score) {
-        // повторный клик — снимаем оценку
-        setUserRating(0);
+        localStorage.setItem(RATE_KEY, 0);
         document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("active"));
-      } else {
-        setUserRating(score);
-        document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
+        return;
       }
+      localStorage.setItem(RATE_KEY, score);
+      document.querySelectorAll(".rate-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      try {
+        await fetch(`${API_BASE}/hit/${KEYS[score]}`);
+        await loadCounts();
+      } catch (e) { console.error(e); }
     });
   });
+  loadCounts();
 }
 
-
 initRating();
+
   
 </script>
 </body>
