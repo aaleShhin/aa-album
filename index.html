@@ -29,7 +29,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ================== ШАПКА ================== */
   header {
     position: sticky;
     top: 0;
@@ -78,14 +77,12 @@
   .search input::placeholder { color: var(--text-2); }
   .search svg { opacity: 0.5; flex-shrink: 0; }
 
-  /* ================== КОНТЕЙНЕР ================== */
   .container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 40px 40px 60px;
   }
 
-  /* ================== АЛЬБОМ ================== */
   .album-head {
     display: flex;
     gap: 32px;
@@ -110,8 +107,13 @@
     position: relative;
   }
   .album-cover img {
-    width: 100%; height: 100%; object-fit: cover;
-    display: block; position: relative; z-index: 1;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 1;
   }
 
   .album-meta { flex: 1; min-width: 0; padding-bottom: 4px; }
@@ -157,7 +159,6 @@
   }
   .play-big:hover { background: #ffd633; transform: scale(1.03); }
 
-  /* ================== СПИСОК ================== */
   .tracks-head {
     display: grid;
     grid-template-columns: 44px 1fr 90px 40px;
@@ -237,9 +238,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .track-ornament { display: none; }
-
-  /* ================== ПЛЕЕР ================== */
   .player {
     position: fixed;
     left: 0; right: 0; bottom: 0;
@@ -271,8 +269,12 @@
     background: linear-gradient(135deg, #2a2a30, #16161a);
     flex-shrink: 0;
     overflow: hidden;
+    position: relative;
   }
-  .now-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .now-cover img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
   .now-info { min-width: 0; }
   .now-title {
     font-size: 0.94rem; font-weight: 600;
@@ -483,7 +485,6 @@
 
 <script>
 // ================== 10 ТРЕКОВ ==================
-// Исполнитель везде — AALESHIN. Альбом — KAZANUS.
 const TRACKS = [
   { id: 1,  title: "intro (пво)",                        artist: "AALESHIN", audio: "track1.mp3"  },
   { id: 2,  title: "mister p…",                          artist: "AALESHIN", audio: "track2.mp3"  },
@@ -497,6 +498,7 @@ const TRACKS = [
   { id: 10, title: "le secret d'Alihan",                 artist: "AALESHIN", audio: "track10.mp3" }
 ];
 
+// ================== РЕНДЕР СПИСКА ==================
 const listEl = document.getElementById("tracks");
 listEl.innerHTML = TRACKS.map((t, i) => `
   <a class="track" data-id="${t.id}" href="track.html?id=${t.id}">
@@ -513,6 +515,25 @@ listEl.innerHTML = TRACKS.map((t, i) => `
   </a>
 `).join("");
 
+// ================== ПРЕДЗАГРУЗКА ДЛИТЕЛЬНОСТЕЙ ==================
+function fmtDuration(sec) {
+  if (!sec || isNaN(sec) || !isFinite(sec)) return "--:--";
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60).toString().padStart(2, "0");
+  return m + ":" + s;
+}
+
+TRACKS.forEach(t => {
+  const probe = document.createElement("audio");
+  probe.preload = "metadata";
+  probe.src = t.audio;
+  probe.addEventListener("loadedmetadata", () => {
+    const el = document.querySelector(`.track[data-id="${t.id}"] [data-dur]`);
+    if (el) el.textContent = fmtDuration(probe.duration);
+  });
+});
+
+// ================== ПЛЕЕР ==================
 const audio = document.getElementById("audio");
 const player = document.getElementById("player");
 const playBtn = document.getElementById("playBtn");
@@ -582,14 +603,6 @@ audio.addEventListener("timeupdate", () => {
     seek.value = (audio.currentTime / audio.duration) * 100;
     curTime.textContent = fmt(audio.currentTime);
     durTime.textContent = fmt(audio.duration);
-  }
-});
-
-audio.addEventListener("loadedmetadata", () => {
-  durTime.textContent = fmt(audio.duration);
-  if (currentIndex >= 0) {
-    const el = document.querySelector(`.track[data-id="${TRACKS[currentIndex].id}"] [data-dur]`);
-    if (el) el.textContent = fmt(audio.duration);
   }
 });
 
